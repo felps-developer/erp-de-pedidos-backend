@@ -1,0 +1,76 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-customers
+      author: golden
+      changes:
+        - createTable:
+            tableName: customers
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: nome
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: cpf
+                  type: varchar(14)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: logradouro
+                  type: varchar(255)
+              - column:
+                  name: numero
+                  type: varchar(20)
+              - column:
+                  name: complemento
+                  type: varchar(255)
+              - column:
+                  name: bairro
+                  type: varchar(255)
+              - column:
+                  name: cidade
+                  type: varchar(255)
+              - column:
+                  name: uf
+                  type: varchar(2)
+              - column:
+                  name: cep
+                  type: varchar(9)
+
+        - createIndex:
+            indexName: idx_customer_email
+            tableName: customers
+            unique: true
+            columns:
+              - column:
+                  name: email
+
+        - createIndex:
+            indexName: idx_customer_cpf
+            tableName: customers
+            unique: true
+            columns:
+              - column:
+                  name: cpf
+
+        - createIndex:
+            indexName: idx_customer_nome
+            tableName: customers
+            columns:
+              - column:
+                  name: nome

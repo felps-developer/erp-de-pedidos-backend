@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/migrations/001-create-customers.yaml
+  - include:
+      file: db/changelog/migrations/002-create-products.yaml
+  - include:
+      file: db/changelog/migrations/003-create-orders.yaml

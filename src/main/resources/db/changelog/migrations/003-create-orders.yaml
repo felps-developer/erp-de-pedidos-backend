@@ -1,0 +1,106 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-create-orders
+      author: golden
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: cliente_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cliente_nome
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: data_criacao
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: data_atualizacao
+                  type: timestamp
+
+        - createIndex:
+            indexName: idx_order_status
+            tableName: orders
+            columns:
+              - column:
+                  name: status
+
+        - createIndex:
+            indexName: idx_order_cliente_id
+            tableName: orders
+            columns:
+              - column:
+                  name: cliente_id
+
+        - createIndex:
+            indexName: idx_order_data_criacao
+            tableName: orders
+            columns:
+              - column:
+                  name: data_criacao
+
+        - createTable:
+            tableName: order_items
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: produto_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: produto_nome
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantidade
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: preco_unitario
+                  type: decimal(12,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: desconto
+                  type: decimal(12,2)
+
+        - addForeignKeyConstraint:
+            baseTableName: order_items
+            baseColumnNames: order_id
+            referencedTableName: orders
+            referencedColumnNames: id
+            constraintName: fk_order_item_order
+            onDelete: CASCADE
