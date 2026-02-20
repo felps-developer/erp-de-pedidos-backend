@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/migrations/002-create-products.yaml
   - include:
       file: db/changelog/migrations/003-create-orders.yaml
+  - include:
+      file: db/changelog/migrations/004-create-users.yaml

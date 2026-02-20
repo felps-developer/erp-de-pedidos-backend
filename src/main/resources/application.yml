@@ -22,6 +22,18 @@ spring:
 server:
   port: 8080
 
+jwt:
+  secret: ${JWT_SECRET:minha-chave-secreta-super-segura-que-tem-pelo-menos-256-bits-ok}
+  expiration: 86400000
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+
 feign:
   client:
     config:

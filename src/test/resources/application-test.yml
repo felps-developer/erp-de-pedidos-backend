@@ -14,3 +14,7 @@ spring:
 
   liquibase:
     enabled: false
+
+jwt:
+  secret: chave-secreta-para-testes-com-pelo-menos-256-bits-necessarios-aqui
+  expiration: 86400000

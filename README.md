@@ -47,6 +47,8 @@ src/main/java/com/golden/erp/
 
 - **Java 21** + **Spring Boot 3.4**
 - **Spring Data JPA** + **PostgreSQL 16**
+- **Spring Security** + **JWT (jjwt)** para autenticação
+- **SpringDoc OpenAPI (Swagger UI)** para documentação interativa
 - **Liquibase** para migrações de banco
 - **Spring Cloud OpenFeign** para integrações externas (ViaCEP, câmbio)
 - **Bean Validation** (Hibernate Validator)
@@ -75,7 +77,65 @@ A aplicação estará disponível em `http://localhost:8080`.
 ./mvnw test
 ```
 
+## Documentação da API (Swagger)
+
+Com a aplicação rodando, acesse:
+
+- **Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- **OpenAPI JSON**: [http://localhost:8080/api-docs](http://localhost:8080/api-docs)
+
+O Swagger UI permite testar todos os endpoints diretamente pelo navegador.
+
+## Autenticação (JWT)
+
+A API utiliza autenticação via **JSON Web Token (JWT)**. Todos os endpoints (exceto login e Swagger) exigem um token válido.
+
+### Credenciais padrão
+
+| Usuário | Senha |
+|---------|-------|
+| `admin` | `admin123` |
+
+### Como autenticar
+
+**1. Obter token:**
+
+```bash
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin", "password": "admin123"}'
+```
+
+**Resposta:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "type": "Bearer",
+  "expiresIn": 86400000
+}
+```
+
+**2. Usar o token nas requisições:**
+
+```bash
+curl -H "Authorization: Bearer {seu_token}" http://localhost:8080/api/customers
+```
+
+**3. No Swagger UI:** Clique no botao "Authorize", insira `Bearer {seu_token}` e todos os endpoints ficam autenticados.
+
+### Endpoints públicos (sem token)
+
+- `POST /api/auth/login`
+- `/swagger-ui/**`
+- `/api-docs/**`
+
 ## Endpoints da API
+
+### Autenticação (`/api/auth`)
+
+| Método | Endpoint | Descrição | Auth |
+|--------|----------|-----------|------|
+| POST | `/api/auth/login` | Realizar login e obter token JWT | Publico |
 
 ### Clientes (`/api/customers`)
 
@@ -170,3 +230,5 @@ POST /api/orders
 - **Ports & Adapters**: `AddressLookupPort` e `ExchangeRatePort` desacoplam integrações externas da lógica de negócio.
 - **Liquibase**: migrações versionadas e reproduzíveis para o banco de dados.
 - **Multi-stage Dockerfile**: imagem final leve usando JRE Alpine.
+- **JWT com Spring Security**: autenticação stateless, endpoints de Swagger e login públicos, demais protegidos.
+- **SpringDoc OpenAPI**: documentação interativa com suporte a Bearer Token integrado.
