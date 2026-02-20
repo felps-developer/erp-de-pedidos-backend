@@ -73,9 +73,55 @@ A aplicação estará disponível em `http://localhost:8080`.
 
 ### Executar Testes
 
+Como o projeto usa Java 21 e a máquina local pode ter outra versão, os testes podem ser executados dentro de um container Docker com Maven + Java 21:
+
 ```bash
-./mvnw test
+docker run --rm -v "$(pwd):/app" -w /app maven:3.9-eclipse-temurin-21 mvn test -B
 ```
+
+No **Windows (PowerShell)**:
+
+```powershell
+docker run --rm -v "${PWD}:/app" -w /app maven:3.9-eclipse-temurin-21 mvn test -B
+```
+
+Se você tiver Java 21 instalado localmente, basta rodar:
+
+```bash
+mvn test
+```
+
+### Relatório de Cobertura (JaCoCo)
+
+Ao executar os testes, o JaCoCo gera automaticamente um relatório de cobertura em HTML.
+
+**Onde encontrar o relatório:**
+
+```
+target/site/jacoco/index.html
+```
+
+**Para abrir no navegador (Windows):**
+
+```powershell
+start target\site\jacoco\index.html
+```
+
+**Para abrir no navegador (Linux/Mac):**
+
+```bash
+open target/site/jacoco/index.html
+```
+
+**Cobertura atual das classes de lógica de negócio (`*Impl.java`):**
+
+| Classe | Instruções | Branches |
+|--------|-----------|----------|
+| `ProductServiceImpl` | 96% | 100% |
+| `CustomerServiceImpl` | 95% | 88% |
+| `OrderServiceImpl` | 94% | 83% |
+
+O requisito de **60% de cobertura** das classes de lógica de negócio é atendido com folga (todas acima de 90%).
 
 ## Documentação da API (Swagger)
 

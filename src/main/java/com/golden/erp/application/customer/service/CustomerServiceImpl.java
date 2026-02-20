@@ -121,17 +121,13 @@ public class CustomerServiceImpl {
             return address;
         }
 
-        try {
-            Address viaCepAddress = addressLookupPort.lookup(address.getCep());
-            return address.enrichWith(
-                    viaCepAddress.getLogradouro(),
-                    viaCepAddress.getBairro(),
-                    viaCepAddress.getCidade(),
-                    viaCepAddress.getUf()
-            );
-        } catch (Exception e) {
-            log.warn("Falha ao enriquecer endereço via CEP {}: {}", address.getCep(), e.getMessage());
-            return address;
-        }
+        Address viaCepAddress = addressLookupPort.lookup(address.getCep());
+        log.info("Endereço enriquecido via CEP {}", address.getCep());
+        return address.enrichWith(
+                viaCepAddress.getLogradouro(),
+                viaCepAddress.getBairro(),
+                viaCepAddress.getCidade(),
+                viaCepAddress.getUf()
+        );
     }
 }

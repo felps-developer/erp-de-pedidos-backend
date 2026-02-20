@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ViaCepAddressLookupAdapter implements AddressLookupPort {
 
+    private static final int MAX_RETRIES = 3;
+    private static final long INITIAL_BACKOFF_MS = 500;
+
     private final ViaCepClient viaCepClient;
 
     @Override
@@ -22,25 +25,44 @@ public class ViaCepAddressLookupAdapter implements AddressLookupPort {
             throw new DomainException("CEP inválido: " + cep);
         }
 
-        try {
-            ViaCepResponse response = viaCepClient.findByCep(cleanCep);
+        Exception lastException = null;
 
-            if (response == null || Boolean.TRUE.equals(response.getErro())) {
-                throw new DomainException("CEP não encontrado: " + cep);
+        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                ViaCepResponse response = viaCepClient.findByCep(cleanCep);
+
+                if (response == null || Boolean.TRUE.equals(response.getErro())) {
+                    throw new DomainException("CEP não encontrado: " + cep);
+                }
+
+                return Address.builder()
+                        .logradouro(response.getLogradouro())
+                        .bairro(response.getBairro())
+                        .cidade(response.getLocalidade())
+                        .uf(response.getUf())
+                        .cep(cleanCep)
+                        .build();
+            } catch (DomainException e) {
+                throw e;
+            } catch (Exception e) {
+                lastException = e;
+                log.warn("Tentativa {}/{} falhou ao consultar ViaCEP para CEP {}: {}",
+                        attempt, MAX_RETRIES, cep, e.getMessage());
+
+                if (attempt < MAX_RETRIES) {
+                    try {
+                        long sleepMs = INITIAL_BACKOFF_MS * (1L << (attempt - 1));
+                        Thread.sleep(sleepMs);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
             }
-
-            return Address.builder()
-                    .logradouro(response.getLogradouro())
-                    .bairro(response.getBairro())
-                    .cidade(response.getLocalidade())
-                    .uf(response.getUf())
-                    .cep(cleanCep)
-                    .build();
-        } catch (DomainException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Erro ao consultar ViaCEP para o CEP {}: {}", cep, e.getMessage());
-            throw new DomainException("Erro ao consultar CEP: " + cep);
         }
+
+        log.error("Todas as {} tentativas falharam ao consultar ViaCEP para CEP {}", MAX_RETRIES, cep);
+        throw new DomainException("Erro ao consultar CEP após " + MAX_RETRIES + " tentativas: " + cep
+                + " - " + (lastException != null ? lastException.getMessage() : "erro desconhecido"));
     }
 }
