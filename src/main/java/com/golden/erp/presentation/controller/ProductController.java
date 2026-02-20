@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -58,10 +59,10 @@ public class ProductController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar produtos", description = "Lista produtos com paginação, ordenação e filtro por status ativo")
+    @Operation(summary = "Listar produtos", description = "Lista produtos com paginação, ordenação e filtro por status ativo. Ordenação padrão: nome ASC. Campos de sort válidos: nome, sku, precoBruto, estoque, ativo")
     public ResponseEntity<Page<ProductResponse>> findAll(
             @Parameter(description = "Filtrar por status ativo (true/false)") @RequestParam(required = false) Boolean ativo,
-            @PageableDefault(sort = "nome", direction = Sort.Direction.ASC) Pageable pageable) {
+            @ParameterObject @PageableDefault(sort = "nome", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(productService.findAll(ativo, pageable));
     }
 

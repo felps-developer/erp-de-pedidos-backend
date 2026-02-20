@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -58,11 +59,11 @@ public class CustomerController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar clientes", description = "Lista clientes com paginação, ordenação e filtros por nome e email")
+    @Operation(summary = "Listar clientes", description = "Lista clientes com paginação, ordenação e filtros por nome e email. Ordenação padrão: nome ASC. Campos de sort válidos: nome, email, cpf")
     public ResponseEntity<Page<CustomerResponse>> findAll(
             @Parameter(description = "Filtrar por nome (parcial, case-insensitive)") @RequestParam(required = false) String nome,
             @Parameter(description = "Filtrar por email (parcial, case-insensitive)") @RequestParam(required = false) String email,
-            @PageableDefault(sort = "nome", direction = Sort.Direction.ASC) Pageable pageable) {
+            @ParameterObject @PageableDefault(sort = "nome", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(customerService.findAll(nome, email, pageable));
     }
 

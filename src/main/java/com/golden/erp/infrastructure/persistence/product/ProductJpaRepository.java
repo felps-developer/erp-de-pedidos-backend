@@ -16,7 +16,7 @@ public interface ProductJpaRepository extends JpaRepository<ProductJpaEntity, Lo
 
     @Query("""
             SELECT p FROM ProductJpaEntity p
-            WHERE (:ativo IS NULL OR p.ativo = :ativo)
+            WHERE (CAST(:ativo AS boolean) IS NULL OR p.ativo = :ativo)
             """)
     Page<ProductJpaEntity> findAllWithFilters(@Param("ativo") Boolean ativo, Pageable pageable);
 

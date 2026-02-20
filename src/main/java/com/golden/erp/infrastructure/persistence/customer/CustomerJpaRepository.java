@@ -18,8 +18,8 @@ public interface CustomerJpaRepository extends JpaRepository<CustomerJpaEntity, 
 
     @Query("""
             SELECT c FROM CustomerJpaEntity c
-            WHERE (:nome IS NULL OR LOWER(c.nome) LIKE LOWER(CONCAT('%', :nome, '%')))
-            AND (:email IS NULL OR LOWER(c.email) LIKE LOWER(CONCAT('%', :email, '%')))
+            WHERE (:nome IS NULL OR LOWER(c.nome) LIKE LOWER(CONCAT('%', CAST(:nome AS string), '%')))
+            AND (:email IS NULL OR LOWER(c.email) LIKE LOWER(CONCAT('%', CAST(:email AS string), '%')))
             """)
     Page<CustomerJpaEntity> findAllWithFilters(
             @Param("nome") String nome,

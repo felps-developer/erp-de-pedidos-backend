@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -59,11 +60,11 @@ public class OrderController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar pedidos", description = "Lista pedidos com paginação, ordenação e filtros por status e cliente")
+    @Operation(summary = "Listar pedidos", description = "Lista pedidos com paginação, ordenação e filtros por status e cliente. Ordenação padrão: dataCriacao DESC. Campos de sort válidos: dataCriacao, status, clienteNome")
     public ResponseEntity<Page<OrderResponse>> findAll(
             @Parameter(description = "Filtrar por status: CREATED, PAID, CANCELLED, LATE") @RequestParam(required = false) OrderStatus status,
             @Parameter(description = "Filtrar por ID do cliente") @RequestParam(required = false) Long clienteId,
-            @PageableDefault(sort = "dataCriacao", direction = Sort.Direction.DESC) Pageable pageable) {
+            @ParameterObject @PageableDefault(sort = "dataCriacao", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(orderService.findAll(status, clienteId, pageable));
     }
 

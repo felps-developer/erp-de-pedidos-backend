@@ -14,8 +14,8 @@ public interface OrderJpaRepository extends JpaRepository<OrderJpaEntity, Long> 
 
     @Query("""
             SELECT o FROM OrderJpaEntity o
-            WHERE (:status IS NULL OR o.status = :status)
-            AND (:clienteId IS NULL OR o.clienteId = :clienteId)
+            WHERE (CAST(:status AS string) IS NULL OR o.status = :status)
+            AND (CAST(:clienteId AS long) IS NULL OR o.clienteId = :clienteId)
             """)
     Page<OrderJpaEntity> findAllWithFilters(
             @Param("status") OrderStatus status,

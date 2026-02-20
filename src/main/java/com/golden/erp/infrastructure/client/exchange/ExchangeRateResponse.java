@@ -14,6 +14,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class ExchangeRateResponse {
 
-    private Boolean success;
+    private String result;
     private Map<String, BigDecimal> rates;
 }

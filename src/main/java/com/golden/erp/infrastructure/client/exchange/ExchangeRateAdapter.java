@@ -26,7 +26,7 @@ public class ExchangeRateAdapter implements ExchangeRatePort {
         }
 
         try {
-            ExchangeRateResponse response = exchangeRateClient.getLatestRates("BRL", "USD");
+            ExchangeRateResponse response = exchangeRateClient.getLatestRates("BRL");
             if (response != null && response.getRates() != null && response.getRates().containsKey("USD")) {
                 cachedRate = response.getRates().get("USD").setScale(6, RoundingMode.HALF_UP);
                 cacheExpiry = LocalDateTime.now().plusHours(1);
